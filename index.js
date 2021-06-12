@@ -57,7 +57,7 @@ function numberToChinese(num) {
   num = num.toString()
   const result = resultOf.wan(num) + resultOf.qian(num) + resultOf.bai(num) + resultOf.shi(num) + resultOf.ge(num)
   // 返回结果包含数字 0，要去除 0
-  return result.replaceAll('0', '')
+  return result.replace(/0/g, '')
 }
 
-module.exports = numberToChinese
+exports.numberToChinese = numberToChinese
