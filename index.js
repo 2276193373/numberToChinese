@@ -72,6 +72,7 @@ function QBSG(numStr) {
 }
 
 function numberToChinese(num) {
+  if (num.toString().length > 16) return console.error('数字超出范围！')
   if (!Number.isInteger(+num)) return console.error('请输入整数！')
   let prefix = ''
   if (num < 0) {
@@ -83,4 +84,4 @@ function numberToChinese(num) {
   return result.replace(/0/g, '')
 }
 
-// exports.numberToChinese = numberToChinese
+exports.numberToChinese = numberToChinese
