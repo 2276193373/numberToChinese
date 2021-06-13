@@ -4,6 +4,9 @@ let shi = '十', bai = '百', qian = '千', wan = '万', yi = '亿'
 
 const resultOf = {
   ge: function(numStr) {
+    if (numStr.length === 1 && numStr === '0') {
+      return '零'
+    }
     // 截取个位数
     const substr = numStr.substr(numStr.length - 1, 1)
     return substr === '0' ? 0 : showZero(this.shi(numStr)) + unit[substr]
@@ -40,9 +43,20 @@ const resultOf = {
   wan: function(numStr) {
     // 截取万位的数
     // 如：111,222,33 则截取1112作为万位的数值，即1112万
-    if (numStr.length < 9 && numStr.length > 4) {
+    if (numStr.length > 4) {
       const substr = numStr.substr(0, numStr.length - 4) // -4: 扣去个、十、百、千，得到万位数，故减4
-      return this.qian(substr) + this.bai(substr) + this.shi(substr) + this.ge(substr) + wan
+      if (numStr > 8 && QBSG(substr) === 0) {
+        return QBSG(numStr.substr(numStr.length - 1, 4)) === 0 ? '零' : ''
+      } else {
+        return QBSG(substr) + wan
+      }
+    }
+    return ''
+  },
+  yi: function(numStr) {
+    if (numStr.length >= 9) {
+      const substr = numStr.substr(0, numStr.length - 8)
+      return this.wan(substr) + QBSG(substr) + yi
     }
     return ''
   }
@@ -53,9 +67,19 @@ function showZero(isZero) {
   return isZero === 0 ? '零' : ''
 }
 
+function QBSG(numStr) {
+  return resultOf.qian(numStr) + resultOf.bai(numStr) + resultOf.shi(numStr) + resultOf.ge(numStr)
+}
+
 function numberToChinese(num) {
-  num = num.toString()
-  const result = resultOf.wan(num) + resultOf.qian(num) + resultOf.bai(num) + resultOf.shi(num) + resultOf.ge(num)
+  if (num.toString().length > 16) return console.error('数字超出范围！')
+  if (!Number.isInteger(+num)) return console.error('请输入整数！')
+  let prefix = ''
+  if (num < 0) {
+    prefix = '负'
+  }
+  num = Math.abs(num).toString()
+  const result = prefix + resultOf.yi(num) + resultOf.wan(num) + resultOf.qian(num) + resultOf.bai(num) + resultOf.shi(num) + resultOf.ge(num)
   // 返回结果包含数字 0，要去除 0
   return result.replace(/0/g, '')
 }
